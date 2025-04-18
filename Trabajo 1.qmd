@@ -1,0 +1,89 @@
+---
+title: "Percepciones sobre inmigración según edad, sexo y región en Chile (2020)"
+format: pdf
+editor: visual
+author: Fernanda duarte, Maite Rojas y Antonia Ríos.
+---
+
+#### Introducción
+
+La percepción sobre la inmigración es un tema de alta relevancia en las sociedades contemporáneas, especialmente en países como Chile, que han experimentado un aumento sostenido en la llegada de personas migrantes en los últimos años. Este fenómeno ha generado tensiones sociales, políticas y culturales que merecen atención desde la perspectiva de las ciencias sociales. Comprender cómo se distribuyen estas percepciones en la población chilena es fundamental para pensar políticas públicas inclusivas y estrategias de integración social.
+
+El presente trabajo se enfoca en analizar la variable P38 de la encuesta Latinobarómetro 2020, la cual pregunta si las personas creen que la inmigración beneficia o perjudica al país. Este análisis se realiza considerando diferencias según sexo, edad y región de residencia. Desde la sociología, resulta relevante examinar cómo las características sociodemográficas influyen en las opiniones respecto de la inmigración, ya que ello permite mapear los discursos de inclusión o exclusión en distintos grupos poblacionales (Castles, de Haas & Miller, 2014; Stefoni, 2011; @Fuenmayor_2022).
+
+La hipótesis de este trabajo es que las mujeres y las personas mayores tenderían a percibir la inmigración como más perjudicial, mientras que los jóvenes y habitantes de zonas urbanas tienden a verla con mayor neutralidad o como un beneficio.
+
+Para esta investigación se utilizó la base de datos Latinobarómetro 2020, filtrando exclusivamente los casos correspondientes a Chile.
+
+#### Preparación de datos
+
+```{r}
+# Cargar paquetes
+library(haven)
+library(dplyr)
+library(ggplot2)
+library(forcats)
+library(readr)
+library(labelled)
+
+# Cargar base de datos procesada
+load("Procesamiento/Preparacion.RData")
+
+# Revisión general
+summary(data)
+```
+
+#### Análisis descriptivo
+
+##### Tabla de frecuencias por sexo
+
+```{r}
+table(data$P38, data$sexo)
+prop.table(table(data$P38, data$sexo), margin = 2)
+```
+
+##### Tabla de frecuencias por región
+
+```{r}
+table(data$P38, data$region)
+```
+
+##### Medidas de edad por percepción P38
+
+```{r}
+data %>%
+  group_by(P38) %>%
+  summarise(
+    media = mean(edad, na.rm = TRUE),
+    sd = sd(edad, na.rm = TRUE),
+    n = n()
+  )
+```
+
+#### Visualizaciones
+
+##### Gráfico de barras de percepción sobre inmigración
+
+```{r}
+ggplot(data, aes(x = fct_infreq(P38))) +
+  geom_bar(fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Percepción sobre inmigración (P38)", x = "Respuesta", y = "Frecuencia")
+```
+
+#### Boxplot de edad según percepción
+
+```{r}
+ggplot(data, aes(x = P38, y = edad, fill = P38)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Edad según percepción sobre inmigración", x = "Percepción", y = "Edad")
+```
+
+#### Conclusión
+
+El análisis descriptivo muestra diferencias claras según sexo y región. Las mujeres tienden a mostrar mayor proporción de respuestas que ven la inmigración como perjudicial, mientras que los hombres y los jóvenes tienden a evaluarla de forma más neutral o positiva. Este reporte sienta las bases para estudios más complejos que aborden causas y consecuencias de estas percepciones.
+
+#### Referencias
+
+Las referencias se incluyen automáticamente desde el archivo `.bib` vinculado a Zotero.
